@@ -113,7 +113,11 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const VoiceInputScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => VoiceInputScreen(
+                      localeId: localizationService.locale.toString(),
+                    ),
+                  ),
                 );
               },
             );
@@ -191,7 +195,11 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const VoiceInputScreen()),
+                MaterialPageRoute(
+                  builder: (_) => VoiceInputScreen(
+                    localeId: localizationService.locale.toString(),
+                  ),
+                ),
               );
             },
           ),
