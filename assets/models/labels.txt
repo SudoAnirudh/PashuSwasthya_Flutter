@@ -1,0 +1,11 @@
+Healthy
+Foot and Mouth Disease
+Mastitis
+Lumpy Skin Disease
+Brucellosis
+Anthrax
+Blackleg
+Fever
+Skin Infection
+Other
+
