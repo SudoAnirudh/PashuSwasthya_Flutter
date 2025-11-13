@@ -79,7 +79,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                   },
                 ),
               );
-            }).toList(),
+            }),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: _continue,
