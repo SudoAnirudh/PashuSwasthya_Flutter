@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pashu_swasthya/models/disease.dart';
+import 'package:pashu_swasthya/services/disease_service.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:flutter_tts/flutter_tts.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package.flutter_tts/flutter_tts.dart';
+import 'package/permission_handler/permission_handler.dart';
 
 class VoiceInputScreen extends StatefulWidget {
-  const VoiceInputScreen({super.key});
+  final String localeId;
+  const VoiceInputScreen({super.key, this.localeId = 'en_IN'});
 
   @override
   State<VoiceInputScreen> createState() => _VoiceInputScreenState();
@@ -13,10 +16,12 @@ class VoiceInputScreen extends StatefulWidget {
 class _VoiceInputScreenState extends State<VoiceInputScreen> {
   late stt.SpeechToText _speech;
   late FlutterTts _flutterTts;
+  final DiseaseService _diseaseService = DiseaseService();
 
   bool _isListening = false;
   String _transcribedText = '';
   String _statusMessage = 'Tap the microphone to describe the cattle health';
+  Disease? _identifiedDisease;
 
   @override
   void initState() {
@@ -36,6 +41,9 @@ class _VoiceInputScreenState extends State<VoiceInputScreen> {
 
   Future<void> _startListening() async {
     await _requestMicrophonePermission();
+    setState(() {
+      _identifiedDisease = null;
+    });
     bool available = await _speech.initialize(
       onStatus: (status) {
         if (status == 'done' || status == 'notListening') {
@@ -64,7 +72,7 @@ class _VoiceInputScreenState extends State<VoiceInputScreen> {
             _transcribedText = result.recognizedWords;
           });
         },
-        localeId: 'en_IN',
+        localeId: widget.localeId,
       );
     } else {
       setState(() {
@@ -80,6 +88,7 @@ class _VoiceInputScreenState extends State<VoiceInputScreen> {
     setState(() {
       _isListening = false;
       _statusMessage = 'Tap the microphone to describe the cattle health';
+      _identifiedDisease = _diseaseService.identifyDisease(_transcribedText);
     });
   }
 
@@ -168,8 +177,43 @@ class _VoiceInputScreenState extends State<VoiceInputScreen> {
               ],
             ),
             const SizedBox(height: 20),
+            if (_identifiedDisease != null) _buildDiseaseInfo(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDiseaseInfo() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Identified Disease: ${_identifiedDisease!.name}',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Symptoms:',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 5),
+          ..._identifiedDisease!.symptoms.map(
+            (symptom) => Text('- $symptom'),
+          ),
+        ],
       ),
     );
   }
