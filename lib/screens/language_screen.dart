@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pashu_swasthya/services/localization_service.dart';
+import 'package:provider/provider.dart';
 import 'home_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,13 +13,15 @@ class LanguageSelectionScreen extends StatefulWidget {
 }
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
-  String? selectedLanguage;
+  int _currentPage = 0;
+  String? selectedLanguage = 'en';
 
   final List<Map<String, String>> languages = [
-    {'name': 'English', 'code': 'en'},
-    {'name': 'தமிழ் (Tamil)', 'code': 'ta'},
-    {'name': 'हिंदी (Hindi)', 'code': 'hi'},
-    {'name': 'ಕನ್ನಡ (Kannada)', 'code': 'kn'},
+    {'name': 'English', 'native': 'English', 'code': 'en'},
+    {'name': 'Hindi', 'native': 'हिन्दी', 'code': 'hi'},
+    {'name': 'Malayalam', 'native': 'മലയാളം', 'code': 'ml'},
+    {'name': 'Kannada', 'native': 'ಕನ್ನಡ', 'code': 'kn'},
+    {'name': 'Tamil', 'native': 'தமிழ்', 'code': 'ta'},
   ];
 
   void _continue() {
@@ -26,6 +30,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Please select a language')));
     } else {
+      Provider.of<LocalizationService>(context, listen: false).setLocale(
+        Locale(selectedLanguage!),
+      );
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -36,70 +43,115 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F9F1),
-      appBar: AppBar(
-        title: Text(
-          "Choose Language",
-          style: GoogleFonts.poppins(color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF1B5E20),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 30),
-            Text(
-              "Select your preferred language",
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 30),
-            ...languages.map((lang) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Choose Your Language',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
-                elevation: 2,
-                child: RadioListTile<String>(
-                  activeColor: const Color(0xFF1B5E20),
-                  title: Text(
-                    lang['name']!,
-                    style: GoogleFonts.poppins(fontSize: 16),
-                  ),
-                  value: lang['code']!,
-                  groupValue: selectedLanguage,
-                  onChanged: (value) {
+              ),
+              const SizedBox(height: 30),
+              Expanded(
+                child: PageView.builder(
+                  itemCount: languages.length,
+                  onPageChanged: (index) {
                     setState(() {
-                      selectedLanguage = value;
+                      _currentPage = index;
+                      selectedLanguage = languages[index]['code'];
                     });
                   },
-                ),
-              );
-            }),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: _continue,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1B5E20),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 60,
-                  vertical: 18,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  itemBuilder: (context, index) {
+                    return _buildLanguageCard(
+                      language: languages[index],
+                      isSelected: selectedLanguage == languages[index]['code'],
+                    );
+                  },
                 ),
               ),
-              child: Text(
-                "Continue",
-                style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  languages.length,
+                  (index) => _buildPageIndicator(index == _currentPage),
+                ),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _continue,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00796B),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  'Continue',
+                  style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageCard({
+    required Map<String, String> language,
+    required bool isSelected,
+  }) {
+    return Card(
+      elevation: isSelected ? 4 : 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isSelected ? const Color(0xFF00796B) : Colors.transparent,
+          width: 2,
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              language['name']!,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              language['native']!,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                color: Colors.grey,
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPageIndicator(bool isActive) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      height: 8,
+      width: isActive ? 24 : 8,
+      decoration: BoxDecoration(
+        color: isActive ? const Color(0xFF00796B) : Colors.grey[300],
+        borderRadius: BorderRadius.circular(12),
       ),
     );
   }

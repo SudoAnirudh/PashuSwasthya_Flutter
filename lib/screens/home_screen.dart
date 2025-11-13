@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pashu_swasthya/screens/camera_diagnosis.dart';
+import 'package:pashu_swasthya/screens/settings_screen.dart';
 import 'package:pashu_swasthya/screens/voice_input.dart';
 import 'package:pashu_swasthya/screens/treatment_guide.dart';
+import 'package:pashu_swasthya/services/localization_service.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,190 +30,176 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  /// 🔹 Card Widget
-  Widget _buildHomeCard({
+  Widget _buildGridCard({
     required IconData icon,
     required String title,
-    required Color startColor,
-    required Color endColor,
+    required String subtitle,
     required VoidCallback onTap,
   }) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: screenWidth * 0.9,
-        height: 90,
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [startColor, endColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: endColor.withOpacity(0.25),
-              blurRadius: 6,
-              offset: const Offset(3, 5),
-            ),
-          ],
         ),
-        child: Row(
-          children: [
-            const SizedBox(width: 20),
-            CircleAvatar(
-              radius: 26,
-              backgroundColor: Colors.white.withOpacity(0.2),
-              child: Icon(icon, size: 30, color: Colors.white),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Text(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: const Color(0xFFE0F2F1),
+                child: Icon(icon, size: 30, color: const Color(0xFF00796B)),
+              ),
+              const SizedBox(height: 16),
+              Text(
                 title,
                 style: GoogleFonts.poppins(
-                  color: Colors.white,
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
+                textAlign: TextAlign.center,
               ),
-            ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.white70,
-              size: 18,
-            ),
-            const SizedBox(width: 16),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                subtitle,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   /// 🔹 Home Screen Content
-  Widget _buildHomeContent() {
-    return SingleChildScrollView(
+  Widget _buildHomeContent(LocalizationService localizationService) {
+    return GridView.builder(
       padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          _buildHomeCard(
-            icon: Icons.camera_alt_rounded,
-            title: 'Camera Diagnosis',
-            startColor: const Color(0xFF1A3D63),
-            endColor: const Color(0xFF1A3D63),
-
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const CameraDiagnosisScreen(),
-                ),
-              );
-            },
-          ),
-          _buildHomeCard(
-            icon: Icons.mic_rounded,
-            title: 'Voice Diagnosis',
-            startColor: const Color(0xFF1A3D63),
-            endColor: const Color(0xFF1A3D63),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const VoiceInputScreen()),
-              );
-            },
-          ),
-          _buildHomeCard(
-            icon: Icons.healing_rounded,
-            title: 'Treatment Guides',
-            startColor: const Color(0xFF1A3D63),
-            endColor: const Color(0xFF1A3D63),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const TreatmentGuidesScreen(),
-                ),
-              );
-            },
-          ),
-          _buildHomeCard(
-            icon: Icons.call_rounded,
-            title: 'Vet Connect',
-            startColor: const Color(0xFF1A3D63),
-            endColor: const Color(0xFF1A3D63),
-            //endColor: const Color(0xFF4A7FA7),
-            onTap: () {
-              // TODO: Add Vet Connect feature
-            },
-          ),
-        ],
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+        childAspectRatio: 0.8,
       ),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        switch (index) {
+          case 0:
+            return _buildGridCard(
+              icon: Icons.healing,
+              title: localizationService.translate('detect_disease'),
+              subtitle: 'Scan symptoms to identify potential illness.',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const CameraDiagnosisScreen(),
+                  ),
+                );
+              },
+            );
+          case 1:
+            return _buildGridCard(
+              icon: Icons.camera_alt,
+              title: localizationService.translate('identify_breed'),
+              subtitle: 'Use your camera to find out the cattle breed.',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const VoiceInputScreen()),
+                );
+              },
+            );
+          case 2:
+            return _buildGridCard(
+              icon: Icons.book,
+              title: localizationService.translate('treatment_guide'),
+              subtitle: 'Access offline guides for common treatments.',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TreatmentGuidesScreen(),
+                  ),
+                );
+              },
+            );
+          case 3:
+            return _buildGridCard(
+              icon: Icons.call,
+              title: localizationService.translate('vet_help'),
+              subtitle: 'Connect with a certified vet for expert advice.',
+              onTap: () {
+                // TODO: Add Vet Connect feature
+              },
+            );
+          default:
+            return Container();
+        }
+      },
     );
   }
 
   /// 🔹 Full Screen Scaffold
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xffB3CFE5), Color(0xffB3CFE5)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return Consumer<LocalizationService>(
+      builder: (context, localizationService, child) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            );
+          },
         ),
-      ),
-      child: Scaffold(
-        backgroundColor:
-            Colors.transparent, // 👈 makes gradient visible behind everything
-        appBar: AppBar(
-          title: Text(
-            'PashuSwasthya',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+        title: Column(
+          children: [
+            Text(
+              'PashuSwasthya',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-          ),
-          centerTitle: true,
-          backgroundColor: const Color(0xFF0A1931),
-          elevation: 3,
-        ),
-        body:
-            _selectedIndex == 0
-                ? _buildHomeContent()
-                : Center(
-                  child: Text(
-                    '${_titles[_selectedIndex]} Page (Coming Soon)',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          selectedItemColor: Color(0xFF0A1931),
-          unselectedItemColor: Colors.grey,
-          backgroundColor: const Color.fromARGB(
-            255,
-            75,
-            111,
-            170,
-          ).withOpacity(0.9),
-          onTap: _onItemTapped,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.mic), label: 'Diagnose'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.healing),
-              label: 'Treatment',
+            Text(
+              'Offline Mode',
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
             ),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           ],
         ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.mic, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const VoiceInputScreen()),
+              );
+            },
+          ),
+        ],
       ),
+      body: _buildHomeContent(localizationService),
+        );
+      },
     );
   }
 }

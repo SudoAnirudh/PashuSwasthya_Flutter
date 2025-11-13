@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'screens/splash_screen.dart';
+import 'package:pashu_swasthya/screens/login_screen.dart';
+import 'package:pashu_swasthya/services/localization_service.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const PashuSwasthya());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => LocalizationService(),
+      child: const PashuSwasthya(),
+    ),
+  );
 }
 
 class PashuSwasthya extends StatelessWidget {
@@ -17,7 +24,7 @@ class PashuSwasthya extends StatelessWidget {
         primaryColor: const Color(0xFF1B5E20),
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      home: const LoginScreen(),
     );
   }
 }
