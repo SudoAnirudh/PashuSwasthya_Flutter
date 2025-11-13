@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package.flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package.permission_handler/permission_handler.dart';
 
 class CameraDiagnosisScreen extends StatefulWidget {
   const CameraDiagnosisScreen({super.key});
@@ -16,7 +17,17 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
 
   String? _analysisResult;
 
+  Future<void> _requestCameraPermission() async {
+    final status = await Permission.camera.request();
+    if (status.isDenied) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Camera permission is required')),
+      );
+    }
+  }
+
   Future<void> _pickImage(ImageSource source) async {
+    await _requestCameraPermission();
     final pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
