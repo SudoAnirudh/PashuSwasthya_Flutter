@@ -11,13 +11,13 @@ class MLService {
   bool _isModelLoaded = false;
   
   // Model configuration - Update these based on your model
-  static const String _modelPath = 'assets/models/disease_classifier.tflite';
+  static const String _modelPath = 'assets/models/final_model.tflite';
   static const String _labelsPath = 'assets/models/labels.txt';
   
   // Model input/output dimensions - Update these based on your model
   static const int _inputSize = 224; // Common sizes: 224, 256, 299, 512
   static const int _numChannels = 3; // RGB
-  static const int _numClasses = 10; // Update based on your disease classes
+  static const int _numClasses = 4; // Update based on your disease classes
   
   List<String> _labels = [];
   
@@ -59,19 +59,6 @@ class MLService {
       print('Loaded ${_labels.length} disease labels');
     } catch (e) {
       print('Error loading labels: $e');
-      // Fallback labels if file doesn't exist
-      _labels = [
-        'Healthy',
-        'Foot and Mouth Disease',
-        'Mastitis',
-        'Lumpy Skin Disease',
-        'Brucellosis',
-        'Anthrax',
-        'Blackleg',
-        'Fever',
-        'Skin Infection',
-        'Other'
-      ];
     }
   }
   
