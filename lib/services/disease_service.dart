@@ -11,6 +11,7 @@ class DiseaseService {
         'Lameness',
       ],
       keywords: ['foot', 'mouth', 'blisters', 'drooling', 'lame'],
+      severity: DiseaseSeverity.severe,
     ),
     Disease(
       name: 'Mastitis',
@@ -20,6 +21,7 @@ class DiseaseService {
         'Abnormalities in milk, such as a watery appearance, flakes, or clots',
       ],
       keywords: ['mastitis', 'udder', 'swelling', 'milk', 'clots'],
+      severity: DiseaseSeverity.moderate,
     ),
     Disease(
       name: 'Lumpy Skin Disease',
@@ -30,6 +32,7 @@ class DiseaseService {
         'Watery eyes',
       ],
       keywords: ['lumpy', 'skin', 'nodules', 'lumps', 'swelling'],
+      severity: DiseaseSeverity.severe,
     ),
   ];
 

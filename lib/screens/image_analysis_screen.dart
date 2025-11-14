@@ -2,20 +2,27 @@ import 'dart:io';
 import 'package.flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pashu_swasthya/models/breed.dart';
+import 'package:pashu_swasthya/services/breed_service.dart';
 import 'package.permission_handler/permission_handler.dart';
 
-class CameraDiagnosisScreen extends StatefulWidget {
-  const CameraDiagnosisScreen({super.key});
+enum AnalysisType { disease, breed }
+
+class ImageAnalysisScreen extends StatefulWidget {
+  final AnalysisType analysisType;
+  const ImageAnalysisScreen({super.key, required this.analysisType});
 
   @override
-  State<CameraDiagnosisScreen> createState() => _CameraDiagnosisScreenState();
+  State<ImageAnalysisScreen> createState() => _ImageAnalysisScreenState();
 }
 
-class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
+class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
+  final BreedService _breedService = BreedService();
 
   String? _analysisResult;
+  Breed? _identifiedBreed;
 
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
@@ -37,7 +44,7 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
     }
   }
 
-  void _analyzeImage() {
+  Future<void> _analyzeImage() async {
     if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please capture or upload image first')),
@@ -45,10 +52,17 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
       return;
     }
 
-    setState(() {
-      _analysisResult =
-          "Possible infection detected. Recommend consulting a vet.";
-    });
+    if (widget.analysisType == AnalysisType.disease) {
+      setState(() {
+        _analysisResult =
+            "Possible infection detected. Recommend consulting a vet.";
+      });
+    } else {
+      final identifiedBreed = await _breedService.identifyBreed(_image!.path);
+      setState(() {
+        _identifiedBreed = identifiedBreed;
+      });
+    }
 
     ScaffoldMessenger.of(
       context,
@@ -60,7 +74,9 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Diagnosis',
+          widget.analysisType == AnalysisType.disease
+              ? 'Disease Diagnosis'
+              : 'Breed Identification',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -79,7 +95,9 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
                 : Image.file(_image!, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 30),
             Text(
-              'Upload or capture your cattle’s photo for health analysis',
+              widget.analysisType == AnalysisType.disease
+                  ? 'Upload or capture your cattle’s photo for health analysis'
+                  : 'Upload or capture your cattle’s photo for breed identification',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(fontSize: 16),
             ),
@@ -140,8 +158,36 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
                   color: Colors.black87,
                 ),
               ),
+            if (_identifiedBreed != null) _buildBreedInfo(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBreedInfo() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Identified Breed: ${_identifiedBreed!.name}',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _identifiedBreed!.description,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ],
       ),
     );
   }

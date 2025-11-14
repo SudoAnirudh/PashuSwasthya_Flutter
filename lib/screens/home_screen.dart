@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pashu_swasthya/screens/camera_diagnosis.dart';
+import 'package:pashu_swasthya/screens/image_analysis_screen.dart';
 import 'package:pashu_swasthya/screens/settings_screen.dart';
 import 'package:pashu_swasthya/screens/voice_input.dart';
 import 'package:pashu_swasthya/screens/treatment_guide.dart';
@@ -100,7 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const CameraDiagnosisScreen(),
+                    builder: (_) => VoiceInputScreen(
+                      localeId: localizationService.locale.toString(),
+                    ),
                   ),
                 );
               },
@@ -114,8 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => VoiceInputScreen(
-                      localeId: localizationService.locale.toString(),
+                    builder: (_) => const ImageAnalysisScreen(
+                      analysisType: AnalysisType.breed,
                     ),
                   ),
                 );

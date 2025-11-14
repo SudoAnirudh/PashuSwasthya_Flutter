@@ -85,11 +85,17 @@ class _VoiceInputScreenState extends State<VoiceInputScreen> {
   Future<void> _stopListening() async {
     if (!_isListening) return;
     await _speech.stop();
+    final identifiedDisease = _diseaseService.identifyDisease(_transcribedText);
     setState(() {
       _isListening = false;
       _statusMessage = 'Tap the microphone to describe the cattle health';
-      _identifiedDisease = _diseaseService.identifyDisease(_transcribedText);
+      _identifiedDisease = identifiedDisease;
     });
+
+    if (identifiedDisease != null &&
+        identifiedDisease.severity == DiseaseSeverity.severe) {
+      _showVetContactDialog();
+    }
   }
 
   Future<void> _saveDescription() async {
@@ -212,6 +218,23 @@ class _VoiceInputScreenState extends State<VoiceInputScreen> {
           const SizedBox(height: 5),
           ..._identifiedDisease!.symptoms.map(
             (symptom) => Text('- $symptom'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showVetContactDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Severe Disease Detected'),
+        content: const Text(
+            'The identified disease is severe. It is highly recommended to contact a veterinarian immediately.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
           ),
         ],
       ),
