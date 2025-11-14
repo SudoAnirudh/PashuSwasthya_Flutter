@@ -5,10 +5,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-val keyProperties = java.util.Properties()
+import java.util.Properties
+import java.io.FileInputStream
+
+val keyProperties = Properties()
 val keyPropertiesFile = rootProject.file("android/key.properties")
 if (keyPropertiesFile.exists()) {
-    keyProperties.load(java.io.FileInputStream(keyPropertiesFile))
+    FileInputStream(keyPropertiesFile).use { keyProperties.load(it) }
 }
 
 android {
@@ -40,7 +43,7 @@ android {
             create("release") {
                 keyAlias = keyProperties["keyAlias"] as String?
                 keyPassword = keyProperties["keyPassword"] as String?
-                storeFile = keyProperties["storeFile"]?.let { file(it) }
+                storeFile = keyProperties["storeFile"]?.let { storeFileValue -> file(storeFileValue.toString()) }
                 storePassword = keyProperties["storePassword"] as String?
             }
         }
@@ -49,9 +52,12 @@ android {
     buildTypes {
         release {
             // Signing config will be used if key.properties exists
+            // If no key.properties exists, Android will use debug signing automatically
             if (keyPropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
+            // Note: Without explicit signing config, Android uses debug signing
+            // This is fine for testing but not for production
         }
     }
 }

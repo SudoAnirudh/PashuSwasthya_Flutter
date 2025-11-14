@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pashu_swasthya/models/disease.dart';
 import 'package:pashu_swasthya/services/disease_service.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package.flutter_tts/flutter_tts.dart';
-import 'package/permission_handler/permission_handler.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class VoiceInputScreen extends StatefulWidget {
   final String localeId;
