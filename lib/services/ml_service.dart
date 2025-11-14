@@ -159,10 +159,15 @@ class MLService {
       for (int x = 0; x < _inputSize; x++) {
         final pixel = resizedImage.getPixel(x, y);
         
+        // Extract RGB values from Pixel object
+        final r = pixel.r;
+        final g = pixel.g;
+        final b = pixel.b;
+        
         // Normalize RGB values to [0, 1]
-        inputBuffer[0][y][x][0] = img.getRed(pixel) / 255.0;
-        inputBuffer[0][y][x][1] = img.getGreen(pixel) / 255.0;
-        inputBuffer[0][y][x][2] = img.getBlue(pixel) / 255.0;
+        inputBuffer[0][y][x][0] = r / 255.0;
+        inputBuffer[0][y][x][1] = g / 255.0;
+        inputBuffer[0][y][x][2] = b / 255.0;
       }
     }
     

@@ -119,14 +119,14 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
 
       if (mounted) {
         setState(() {
-          _analysisResult = prediction.formattedResult;
+          _analysisResult = prediction?.formattedResult;
           _isAnalyzing = false;
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              prediction.confidence >= 50.0
+              (prediction?.confidence ?? 0.0) >= 50.0
                   ? 'Analysis complete'
                   : 'Low confidence. Please consult a veterinarian.',
             ),
