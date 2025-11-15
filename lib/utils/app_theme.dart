@@ -225,37 +225,16 @@ class AppTheme {
 
   /// Get responsive padding based on screen size
   static EdgeInsets getResponsivePadding(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width > 1200) {
-      return const EdgeInsets.symmetric(horizontal: 48, vertical: 24);
-    } else if (width > 800) {
-      return const EdgeInsets.symmetric(horizontal: 32, vertical: 20);
-    } else {
-      return const EdgeInsets.all(20);
-    }
+    return const EdgeInsets.all(20);
   }
 
   /// Get responsive font size
   static double getResponsiveFontSize(BuildContext context, double baseSize) {
-    final width = MediaQuery.of(context).size.width;
-    if (width > 1200) {
-      return baseSize * 1.2;
-    } else if (width > 800) {
-      return baseSize * 1.1;
-    }
     return baseSize;
   }
 
   /// Get grid cross axis count based on screen width
   static int getGridCrossAxisCount(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width > 1200) {
-      return 4;
-    } else if (width > 800) {
-      return 3;
-    } else if (width > 600) {
-      return 2;
-    }
     return 2;
   }
 }
