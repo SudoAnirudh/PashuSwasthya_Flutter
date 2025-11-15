@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pashu_swasthya/screens/login_screen.dart';
 import 'package:pashu_swasthya/services/localization_service.dart';
+import 'package:pashu_swasthya/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -18,12 +19,9 @@ class PashuSwasthya extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cattle Health Assistant',
+      title: 'PashuSwasthya - Cattle Health Assistant',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: const Color(0xFF1B5E20),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.getTheme(isDark: false),
       home: const LoginScreen(),
     );
   }

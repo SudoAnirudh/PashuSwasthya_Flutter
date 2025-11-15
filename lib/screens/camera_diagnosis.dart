@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pashu_swasthya/services/ml_service.dart';
+import 'package:pashu_swasthya/utils/app_theme.dart';
 
 class CameraDiagnosisScreen extends StatefulWidget {
   const CameraDiagnosisScreen({super.key});
@@ -98,7 +99,7 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
     });
 
     try {
-      DiseasePrediction? prediction;
+      DiseasePrediction prediction;
       
       if (_isModelLoaded) {
         // Use ML model for classification
@@ -119,14 +120,14 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
 
       if (mounted) {
         setState(() {
-          _analysisResult = prediction?.formattedResult;
+          _analysisResult = prediction.formattedResult;
           _isAnalyzing = false;
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              (prediction?.confidence ?? 0.0) >= 50.0
+              prediction.confidence >= 50.0
                   ? 'Analysis complete'
                   : 'Low confidence. Please consult a veterinarian.',
             ),
@@ -155,29 +156,22 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Diagnosis',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.green.shade700,
+        title: const Text('Diagnosis'),
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: AppTheme.getResponsivePadding(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _image == null
-                ? const Icon(Icons.image, size: 120, color: Colors.grey)
+                ? Icon(Icons.image, size: 120, color: AppTheme.textSecondary)
                 : Image.file(_image!, height: 250, fit: BoxFit.cover),
             const SizedBox(height: 30),
             Text(
-              'Upload or capture your cattle’s photo for health analysis',
+              'Upload or capture your cattle\'s photo for health analysis',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 16),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 30),
             Row(
@@ -186,24 +180,13 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
                 ElevatedButton.icon(
                   icon: const Icon(Icons.camera_alt),
                   label: const Text('Camera'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade600,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                  ),
                   onPressed: () => _pickImage(ImageSource.camera),
                 ),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.photo_library),
                   label: const Text('Gallery'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade600,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
+                    backgroundColor: AppTheme.primaryGreenLight,
                   ),
                   onPressed: () => _pickImage(ImageSource.gallery),
                 ),
@@ -224,15 +207,8 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
                   : Icon(_isModelLoaded ? Icons.analytics : Icons.warning),
               label: Text(_isAnalyzing ? 'Analyzing...' : 'Analyze'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange.shade700,
+                backgroundColor: AppTheme.warningOrange,
                 disabledBackgroundColor: Colors.grey,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
               ),
             ),
             if (!_isModelLoaded)
@@ -240,9 +216,8 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
                   'ML model not loaded - using fallback mode',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: Colors.orange.shade700,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppTheme.warningOrange,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -253,9 +228,9 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade200),
+                  color: AppTheme.backgroundLight,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppTheme.accentGreen),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,16 +239,14 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
                       children: [
                         Icon(
                           Icons.medical_services,
-                          color: Colors.green.shade700,
+                          color: AppTheme.primaryGreen,
                           size: 24,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Diagnosis Result',
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green.shade900,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: AppTheme.primaryGreen,
                           ),
                         ),
                       ],
@@ -282,33 +255,28 @@ class _CameraDiagnosisScreenState extends State<CameraDiagnosisScreen> {
                     Text(
                       _analysisResult!,
                       textAlign: TextAlign.left,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     const SizedBox(height: 12),
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.amber.shade50,
+                        color: AppTheme.warningOrange.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.info_outline,
-                            color: Colors.amber.shade800,
+                            color: AppTheme.warningOrange,
                             size: 20,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'This is an AI-assisted diagnosis. Always consult a qualified veterinarian for confirmation.',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: Colors.amber.shade900,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppTheme.warningOrange,
                               ),
                             ),
                           ),

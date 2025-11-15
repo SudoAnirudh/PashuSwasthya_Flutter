@@ -5,6 +5,7 @@ import 'package:pashu_swasthya/screens/settings_screen.dart';
 import 'package:pashu_swasthya/screens/voice_input.dart';
 import 'package:pashu_swasthya/screens/treatment_guide.dart';
 import 'package:pashu_swasthya/services/localization_service.dart';
+import 'package:pashu_swasthya/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,22 +37,30 @@ class _HomeScreenState extends State<HomeScreen> {
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: const Color(0xFFE0F2F1),
-                child: Icon(icon, size: 30, color: const Color(0xFF00796B)),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.backgroundLight,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 32,
+                  color: AppTheme.primaryGreen,
+                ),
               ),
               const SizedBox(height: 16),
               Text(
@@ -59,17 +68,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  color: AppTheme.textPrimary,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 8),
               Text(
                 subtitle,
                 style: GoogleFonts.poppins(
                   fontSize: 12,
-                  color: Colors.grey,
+                  color: AppTheme.textSecondary,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -79,14 +93,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// 🔹 Home Screen Content
-  Widget _buildHomeContent(LocalizationService localizationService) {
+  Widget _buildHomeContent(LocalizationService localizationService, BuildContext context) {
+    final crossAxisCount = AppTheme.getGridCrossAxisCount(context);
+    final padding = AppTheme.getResponsivePadding(context);
+    
     return GridView.builder(
-      padding: const EdgeInsets.all(20),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      padding: padding,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
         crossAxisSpacing: 20,
         mainAxisSpacing: 20,
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.85,
       ),
       itemCount: 4,
       itemBuilder: (context, index) {
@@ -157,55 +174,52 @@ class _HomeScreenState extends State<HomeScreen> {
     return Consumer<LocalizationService>(
       builder: (context, localizationService, child) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppTheme.backgroundWhite,
           appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
-            );
-          },
-        ),
-        title: Column(
-          children: [
-            Text(
-              'PashuSwasthya',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+            leading: IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              },
             ),
-            Text(
-              'Offline Mode',
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.mic, color: Colors.black),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => VoiceInputScreen(
-                    localeId: localizationService.locale.toString(),
+            title: Column(
+              children: [
+                Text(
+                  'PashuSwasthya',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
                 ),
-              );
-            },
+                Text(
+                  'Offline Mode',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.mic),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => VoiceInputScreen(
+                        localeId: localizationService.locale.toString(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: _buildHomeContent(localizationService),
+          body: _buildHomeContent(localizationService, context),
         );
       },
     );

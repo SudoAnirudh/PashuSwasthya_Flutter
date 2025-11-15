@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pashu_swasthya/screens/language_screen.dart';
+import 'package:pashu_swasthya/utils/app_theme.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -8,10 +9,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundWhite,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: AppTheme.getResponsivePadding(context),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -21,18 +22,16 @@ class LoginScreen extends StatelessWidget {
               Text(
                 'PashuSwasthya',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: AppTheme.primaryGreen,
                 ),
               ),
               const SizedBox(height: 10),
               Text(
                 'Smart Care for Your Cattle - Even Without Internet',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.grey,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: AppTheme.textSecondary,
                 ),
               ),
               const SizedBox(height: 60),
@@ -45,17 +44,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF50),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Get Started',
-                  style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
-                ),
+                child: const Text('Get Started'),
               ),
             ],
           ),
@@ -71,10 +60,10 @@ class LoginScreen extends StatelessWidget {
         height: 150,
       );
     } catch (e) {
-      return const Icon(
+      return Icon(
         Icons.pets,
         size: 150,
-        color: Colors.grey,
+        color: AppTheme.primaryGreen,
       );
     }
   }

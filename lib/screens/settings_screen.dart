@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pashu_swasthya/utils/app_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -16,16 +17,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Settings',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text('Settings'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: AppTheme.getResponsivePadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -112,29 +108,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: Icon(icon),
+        leading: Icon(icon, color: AppTheme.primaryGreen),
         title: Text(
           title,
-          style: GoogleFonts.poppins(),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         subtitle: subtitle != null
             ? Text(
                 subtitle,
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: Theme.of(context).textTheme.bodySmall,
               )
             : null,
         trailing: trailingWidget ??
             (trailing != null
                 ? Text(
                     trailing,
-                    style: GoogleFonts.poppins(
-                      color: Colors.grey,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.textSecondary,
                     ),
                   )
-                : const Icon(Icons.arrow_forward_ios, size: 16)),
+                : Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.textSecondary)),
         onTap: onTap,
       ),
     );
@@ -143,10 +136,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: GoogleFonts.poppins(
-        fontSize: 14,
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: Colors.grey,
+        color: AppTheme.textSecondary,
       ),
     );
   }

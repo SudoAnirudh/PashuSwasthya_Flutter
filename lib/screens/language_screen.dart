@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pashu_swasthya/services/localization_service.dart';
+import 'package:pashu_swasthya/utils/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'home_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,19 +44,21 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundWhite,
+      appBar: AppBar(
+        title: const Text('Select Language'),
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: AppTheme.getResponsivePadding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 'Choose Your Language',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  color: AppTheme.primaryGreen,
                 ),
               ),
               const SizedBox(height: 30),
@@ -86,17 +89,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: _continue,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00796B),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Continue',
-                  style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
-                ),
+                child: const Text('Continue'),
               ),
             ],
           ),
@@ -112,9 +105,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     return Card(
       elevation: isSelected ? 4 : 1,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isSelected ? const Color(0xFF00796B) : Colors.transparent,
+          color: isSelected ? AppTheme.primaryGreen : Colors.transparent,
           width: 2,
         ),
       ),
@@ -124,17 +117,15 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
           children: [
             Text(
               language['name']!,
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: isSelected ? AppTheme.primaryGreen : AppTheme.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               language['native']!,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: Colors.grey,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppTheme.textSecondary,
               ),
             ),
           ],
@@ -150,7 +141,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
       height: 8,
       width: isActive ? 24 : 8,
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFF00796B) : Colors.grey[300],
+        color: isActive ? AppTheme.primaryGreen : Colors.grey[300],
         borderRadius: BorderRadius.circular(12),
       ),
     );
